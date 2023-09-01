@@ -1,7 +1,6 @@
 const AsyncQueue = require('./queue');
 const sinon = require('sinon');
 
-
 describe('async_queue', () => {
     let queue;
 
@@ -36,7 +35,7 @@ describe('async_queue', () => {
         }, 20);
     });
 
-    it.only('Should return the item at head when peek method is called', () => {
+    it('Should return the item at head when peek method is called', () => {
         queue.enqueue(222);
         queue.enqueue(2312);
         queue.enqueue(223222);
@@ -45,20 +44,21 @@ describe('async_queue', () => {
         expect(queue.peek()).toBe(222)
     });
 
-    it('Should start the dequeue process once start method is called', (done) => {
+    it.only('Should start the dequeue process once start method is called', (done) => {
+        const onDequeueSpy = jest.fn();
+        queue.on('dequeued', onDequeueSpy);
+
         queue.enqueue(1);
         queue.enqueue(2);
 
-        var onDequeueSpy = sinon.spy();
-        queue.on('dequeued', onDequeueSpy);
 
         setTimeout(() => {
-            onDequeueSpy.callCount.should.eql(0);
+            expect(onDequeueSpy).toHaveBeenCalledTimes(0);
             queue.start();
         }, 260);
 
         setTimeout(() => {
-            onDequeueSpy.callCount.should.eql(1);
+            expect(onDequeueSpy).toHaveBeenCalledTimes(1);
             done()
         }, 520);
     });
