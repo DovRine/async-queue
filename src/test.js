@@ -63,7 +63,7 @@ describe('async_queue', () => {
         }, 520);
     });
 
-    it.only('Should dequeue items every 250ms from the queue', (done) => {
+    it('Should dequeue items every 250ms from the queue', (done) => {
         const onDequeueSpy = jest.fn();
         queue.on('dequeued', onDequeueSpy);
 
@@ -85,28 +85,28 @@ describe('async_queue', () => {
         }, 510);
     });
 
-
     it('Should update the queue interval', (done) => {
-        queue.getCurrentInterval().should.eql(250);
+        const onDequeueSpy = jest.fn();
+        queue.on('dequeued', onDequeueSpy);
+
+        expect(queue.getCurrentInterval()).toBe(250);
         queue.emit('interval', 20);
-        queue.getCurrentInterval().should.eql(20);
+        expect(queue.getCurrentInterval()).toBe(20);
 
         queue.enqueue(2);
         queue.enqueue(3);
         queue.enqueue(4);
 
-        var onDequeueSpy = sinon.spy();
-        queue.on('dequeued', onDequeueSpy);
 
         queue.start();
 
-        queue.peek().should.eql(2);
+        expect(queue.peek()).toBe(2);
 
         setTimeout(() => {
-            onDequeueSpy.callCount.should.eql(3);
-            onDequeueSpy.getCall(0).args[0].should.eql(2);
-            onDequeueSpy.getCall(1).args[0].should.eql(3);
-            onDequeueSpy.getCall(2).args[0].should.eql(4);
+            expect(onDequeueSpy).toHaveBeenCalledTimes(3);
+            expect(onDequeueSpy).toHaveBeenNthCalledWith(1, 2);
+            expect(onDequeueSpy).toHaveBeenNthCalledWith(2, 3);
+            expect(onDequeueSpy).toHaveBeenNthCalledWith(3, 4);
             done();
         }, 100);
     });
