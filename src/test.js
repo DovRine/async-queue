@@ -111,7 +111,7 @@ describe('async_queue', () => {
         }, 100);
     });
 
-    it.only('Should pause the dequeue process', (done) => {
+    it('Should pause the dequeue process', (done) => {
         const onDequeueSpy = jest.fn();
         queue.on('dequeued', onDequeueSpy);
 
@@ -135,11 +135,9 @@ describe('async_queue', () => {
         }, 320);
     });
 
-
-    it('Should continue to listen for new data even on pausing the dequeue process', (done) => {
-
-        var onDequeueSpy = sinon.spy();
-        var onEnqueueSpy = sinon.spy();
+    it.only('Should continue to listen for new data even on pausing the dequeue process', (done) => {
+        const onDequeueSpy = jest.fn();
+        const onEnqueueSpy = jest.fn();
         queue.on('dequeued', onDequeueSpy);
 
         queue.start();
@@ -151,7 +149,10 @@ describe('async_queue', () => {
         queue.pause();
 
         setTimeout(() => {
-            onDequeueSpy.callCount.should.eql(0);
+            // NOTE: this test expects 0 b/c the initial delay is 250 and this
+            //       timer doesn't fire until 260. This is not a reliable way
+            //       to test this b/c settimeout only guarantees a minimum delay.
+            expect(onDequeueSpy).toHaveBeenCalledTimes(0);
             queue.start();
             queue.emit('interval', 50);
             queue.on('enqueued', onEnqueueSpy);
@@ -161,15 +162,12 @@ describe('async_queue', () => {
 
         setTimeout(() => {
             queue.enqueue(221);
-            onEnqueueSpy.callCount.should.eql(3);
-            onDequeueSpy.callCount.should.eql(1);
-            queue.print().should.eql([3, 4, 95, 110, 221]);
+            expect(onEnqueueSpy).toHaveBeenCalledTimes(3);
+            expect(onDequeueSpy).toHaveBeenCalledTimes(1);
+            expect(queue.print()).toStrictEqual([3, 4, 95, 110, 221]);
             done();
         }, 320);
 
     });
-
-
-
 });
  
