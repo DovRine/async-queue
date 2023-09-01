@@ -135,7 +135,7 @@ describe('async_queue', () => {
         }, 320);
     });
 
-    it.only('Should continue to listen for new data even on pausing the dequeue process', (done) => {
+    it('Should continue to listen for new data even on pausing the dequeue process', (done) => {
         const onDequeueSpy = jest.fn();
         const onEnqueueSpy = jest.fn();
         queue.on('dequeued', onDequeueSpy);
