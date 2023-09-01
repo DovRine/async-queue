@@ -44,7 +44,7 @@ describe('async_queue', () => {
         expect(queue.peek()).toBe(222)
     });
 
-    it.only('Should start the dequeue process once start method is called', (done) => {
+    it('Should start the dequeue process once start method is called', (done) => {
         const onDequeueSpy = jest.fn();
         queue.on('dequeued', onDequeueSpy);
 
@@ -63,26 +63,26 @@ describe('async_queue', () => {
         }, 520);
     });
 
-    it('Should dequeue items every 250ms from the queue', (done) => {
+    it.only('Should dequeue items every 250ms from the queue', (done) => {
+        const onDequeueSpy = jest.fn();
+        queue.on('dequeued', onDequeueSpy);
+
         queue.enqueue(1);
         queue.enqueue(2);
         queue.start();
-        queue.getCurrentInterval().should.eql(250);
+        expect(queue.getCurrentInterval()).toBe(250);
 
-        var onDequeueSpy = sinon.spy();
-        queue.on('dequeued', onDequeueSpy);
 
         setTimeout(() => {
-            onDequeueSpy.calledOnce.should.be.true;
-            onDequeueSpy.firstCall.args[0].should.eql(1);
+            expect(onDequeueSpy).toHaveBeenCalledTimes(1)
+            expect(onDequeueSpy).toHaveBeenNthCalledWith(1, 1)
         }, 260);
 
         setTimeout(() => {
-            onDequeueSpy.calledTwice.should.be.true;
-            onDequeueSpy.getCall(1).args[0].should.eql(2);
-            done();
+            expect(onDequeueSpy).toHaveBeenCalledTimes(2)
+            expect(onDequeueSpy).toHaveBeenNthCalledWith(2, 2)
+            done()
         }, 510);
-
     });
 
 
