@@ -111,10 +111,8 @@ describe('async_queue', () => {
         }, 100);
     });
 
-
-    it('Should pause the dequeue process', (done) => {
-
-        var onDequeueSpy = sinon.spy();
+    it.only('Should pause the dequeue process', (done) => {
+        const onDequeueSpy = jest.fn();
         queue.on('dequeued', onDequeueSpy);
 
         queue.start();
@@ -126,16 +124,15 @@ describe('async_queue', () => {
         queue.pause();
 
         setTimeout(() => {
-            onDequeueSpy.callCount.should.eql(0);
+            expect(onDequeueSpy).toHaveBeenCalledTimes(0);
             queue.start();
             queue.emit('interval', 50);
         }, 260);
 
         setTimeout(() => {
-            onDequeueSpy.callCount.should.eql(1);
+            expect(onDequeueSpy).toHaveBeenCalledTimes(1);
             done();
         }, 320);
-
     });
 
 
