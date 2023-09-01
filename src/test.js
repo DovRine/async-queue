@@ -13,7 +13,7 @@ describe('async_queue', () => {
         queue.removeAllListeners();
     });
 
-    it.only('Should have all the methods in the class', () => {
+    it('Should have all the methods in the class', () => {
         requiredMethods = ['enqueue', 'getCurrentInterval', 'peek', 'print', 'start', 'pause']
         for(const method of requiredMethods){
             const fn = queue[method];
@@ -22,19 +22,18 @@ describe('async_queue', () => {
         }
     });
 
-    it('Should enqueue the items to the queue', (done) => {
-        var onQueueSpy = sinon.spy();
+    it.only('Should enqueue the items to the queue', (done) => {
+        const onQueueSpy = jest.fn()
         queue.on('enqueued', onQueueSpy);
 
         queue.enqueue(1);
         queue.enqueue(2);
 
         setTimeout(() => {
-            onQueueSpy.callCount.should.eql(2);
+            expect(onQueueSpy).toHaveBeenCalledTimes(2)
+            expect(queue.print()).toStrictEqual([1, 2])
             done();
         }, 20);
-
-        queue.print().should.eql([1, 2]);
     });
 
     it('Should return the item at head when peek method is called', () => {
