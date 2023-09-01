@@ -1,7 +1,4 @@
-const chai = require('chai');
 const AsyncQueue = require('./queue');
-const Promise = require('bluebird');
-const should = chai.should();
 const sinon = require('sinon');
 
 
@@ -16,11 +13,13 @@ describe('async_queue', () => {
         queue.removeAllListeners();
     });
 
-    it('Should have all the methods in the class', () => {
-        ['enqueue', 'getCurrentInterval', 'peek', 'print', 'start', 'pause']
-            .forEach(method => {
-                queue.should.have.property(method);
-            })
+    it.only('Should have all the methods in the class', () => {
+        requiredMethods = ['enqueue', 'getCurrentInterval', 'peek', 'print', 'start', 'pause']
+        for(const method of requiredMethods){
+            const fn = queue[method];
+            expect(fn).toBeDefined();
+            expect(typeof fn).toBe('function');
+        }
     });
 
     it('Should enqueue the items to the queue', (done) => {
