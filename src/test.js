@@ -22,7 +22,7 @@ describe('async_queue', () => {
         }
     });
 
-    it.only('Should enqueue the items to the queue', (done) => {
+    it('Should enqueue the items to the queue', (done) => {
         const onQueueSpy = jest.fn()
         queue.on('enqueued', onQueueSpy);
 
@@ -36,14 +36,13 @@ describe('async_queue', () => {
         }, 20);
     });
 
-    it('Should return the item at head when peek method is called', () => {
+    it.only('Should return the item at head when peek method is called', () => {
         queue.enqueue(222);
         queue.enqueue(2312);
         queue.enqueue(223222);
         queue.enqueue(1223);
 
-        queue.peek().should.eql(222);
-
+        expect(queue.peek()).toBe(222)
     });
 
     it('Should start the dequeue process once start method is called', (done) => {
